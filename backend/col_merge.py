@@ -8,7 +8,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from recommendation_utils import get_recommendations, search_products, load_cosine_similarity
 
 # Step 1: Load the cleaned dataset
-df = pd.read_csv('backend\data\cleaned_product_set.csv')
+df = pd.read_csv('backend/data/cleaned_1000_entries.csv')
 
 # Step 2: Preprocessing combined features
 for col in ['brand', 'product_category_tree', 'description']:
@@ -26,7 +26,7 @@ df = df.drop_duplicates(subset=['combined_features'])
 df = df.drop_duplicates(subset=['product_name'])
 
 # Save cosine similarity only if not already saved
-cosine_sim_path = 'backend\data\cosine_similarity.pkl'
+cosine_sim_path = 'backend/data/cosine_similarity_1000.pkl'
 
 if not os.path.exists(cosine_sim_path):
     print("⏳ Calculating cosine similarity and saving...")
@@ -54,4 +54,7 @@ for rec in recommendations:
 
 # Test Search
 search_results = search_products("shirts", df)
-print("🔎 Search Results:", search_results)
+if search_results:
+    print("🔎 Search Results:", search_results)
+else:
+    print("❌ No products found matching your search.")

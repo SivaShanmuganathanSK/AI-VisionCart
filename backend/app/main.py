@@ -1,29 +1,25 @@
 from fastapi import FastAPI
-from functools import lru_cache
-import pandas as pd
-import pickle
-
-# Absolute import (ensure recommender.py is in the same directory)
-from .recommender import get_recommendations, search_products
+from fastapi.middleware.cors import CORSMiddleware
+import json
+import os
+from app.api import recommender_routes
 
 app = FastAPI()
 
-# Lazy load and cache the data
-@lru_cache()
-def load_data():
-    df = pd.read_csv('data/cleaned_product_set.csv')
-    with open('data/cosine_similarity.pkl', 'rb') as f:
-        cosine_sim = pickle.load(f)
-    return df, cosine_sim
+# Enable CORS for frontend access
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Or specify your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-@app.get("/search/")
-def search_products_api(query: str):
-    df, _ = load_data()
-    results = search_products(query, df)
-    return {"results": results}
+@app.get("/api/products")
+def get_products():
+    json_path = os.path.join(os.path.dirname(__file__), '../data/cleaned_1000_entries.json')
+    with open(json_path, "r") as f:
+        products = json.load(f)
+    return products
 
-@app.get("/recommend/")
-def recommend_products_api(product_name: str):
-    df, cosine_sim = load_data()
-    recommendations = get_recommendations(product_name, df, cosine_sim)
-    return {"recommendations": recommendations}
+app.include_router(recommender_routes.router)

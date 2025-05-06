@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.services.recommender import get_recommendations, search_products
+from ..services.recommender import get_recommendations, search_products
 
 router = APIRouter()
 

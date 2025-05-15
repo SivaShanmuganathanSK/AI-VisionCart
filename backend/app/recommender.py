@@ -40,3 +40,4 @@ def search_products(user_input, df, top_n=10):
     
     return unique_matching_products['product_name'].head(top_n).tolist()
 
+

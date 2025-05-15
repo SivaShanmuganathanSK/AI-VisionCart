@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
 import "./HomePage.css";
 import h1 from "../images/h1.png";
 import h2 from "../images/h2.png";
@@ -7,40 +8,43 @@ import h3 from "../images/h3.png";
 import h4 from "../images/h4.png";
 
 const heroImages = [h1, h2, h3, h4];
+  
+const fallbackImage = 'https://via.placeholder.com/1200x400?text=Banner+Image';
 
 const HomePage = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
+    console.log('Carousel started');
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % heroImages.length);
+      setCurrentSlide((prev) => {
+        const next = (prev + 1) % heroImages.length;
+        console.log('Carousel slide:', next);
+        return next;
+      });
     }, 3500);
     return () => clearInterval(interval);
   }, []);
 
-  const goToSlide = (idx) => setCurrentSlide(idx);
+  const goToSlide = (idx) => {
+    setCurrentSlide(idx);
+    console.log('Carousel manual slide:', idx);
+  };
 
   return (
     <div className="homepage">
-      {/* Navbar */}
-      <nav className="navbar">
-        <div className="logo">Stride X</div>
-        <div className="nav-links">
-          <Link to="/" className="nav-link">Home</Link>
-          <Link to="/about" className="nav-link">About</Link>
-          <Link to="/shop" className="nav-link">Shop</Link>
-          <Link to="/contact" className="nav-link">Contact</Link>
-        </div>
-        <div className="nav-actions">
-          <input type="text" placeholder="Search" className="search-bar" />
-          <Link to="/login" className="login">LOGIN</Link>
-          <span className="cart-icon">🛒</span>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Full-width Hero Banner Carousel */}
       <section className="hero-banner-carousel">
-        <img src={heroImages[currentSlide]} alt={`Hero ${currentSlide + 1}`} className="hero-carousel-img-full" />
+        <Link to="/shop">
+          <img 
+            src={heroImages[currentSlide] || fallbackImage}
+            alt={`Hero ${currentSlide + 1}`}
+            className="hero-carousel-img-full"
+            onError={e => { e.target.onerror = null; e.target.src = fallbackImage; }}
+          />
+        </Link>
         <div className="carousel-dots-full">
           {heroImages.map((_, idx) => (
             <span
@@ -50,9 +54,6 @@ const HomePage = () => {
             />
           ))}
         </div>
-        <Link to="/shop" className="shop-now-link">
-          <button className="shop-now">SHOP NOW</button>
-        </Link>
       </section>
 
       {/* Responsibility Statement */}
@@ -66,19 +67,19 @@ const HomePage = () => {
         <div className="collection-list">
           <div className="collection trending">
             <span>TRENDING.</span>
-            <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+            <Link to="/shop?gender=men&status=trending"><button>VIEW PRODUCTS</button></Link>
           </div>
           <div className="collection limited">
             <span>LIMITED STOCK</span>
-            <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+            <Link to="/shop?gender=men&status=limited stock"><button>VIEW PRODUCTS</button></Link>
           </div>
           <div className="collection men">
             <span>MEN</span>
-            <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+            <Link to="/shop?gender=women&status=trending"><button>VIEW PRODUCTS</button></Link>
           </div>
           <div className="collection women">
             <span>WOMEN.</span>
-            <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+            <Link to="/shop?gender=women&status=limited stock"><button>VIEW PRODUCTS</button></Link>
           </div>
         </div>
         <Link to="/shop"><button className="view-all">View all products</button></Link>
@@ -109,19 +110,19 @@ const HomePage = () => {
             <React.Fragment key={i}>
               <div className="category trending">
                 <span>TRENDING.</span>
-                <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+                <Link to="/shop?gender=men&status=trending"><button>VIEW PRODUCTS</button></Link>
               </div>
               <div className="category limited">
                 <span>LIMITED STOCK</span>
-                <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+                <Link to="/shop?gender=men&status=limited stock"><button>VIEW PRODUCTS</button></Link>
               </div>
               <div className="category men">
                 <span>MEN</span>
-                <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+                <Link to="/shop?gender=women&status=trending"><button>VIEW PRODUCTS</button></Link>
               </div>
               <div className="category women">
                 <span>WOMEN.</span>
-                <Link to="/shop"><button>VIEW PRODUCTS</button></Link>
+                <Link to="/shop?gender=women&status=limited stock"><button>VIEW PRODUCTS</button></Link>
               </div>
             </React.Fragment>
           ))}
@@ -149,25 +150,25 @@ const HomePage = () => {
             <img src="https://i.imgur.com/8Km9tLL.jpg" alt="Blog 1" />
             <span>OCTOBER 18, 2023</span>
             <p>How hip-hop influenced sneaker culture</p>
-            <Link to="/shop"><button>READ MORE</button></Link>
+            <Link to="/blog"><button>READ MORE</button></Link>
           </div>
           <div className="blog-card">
             <img src="https://i.imgur.com/8Km9tLL.jpg" alt="Blog 2" />
             <span>FEBRUARY 21, 2024</span>
             <p>2024 in footwear: The trends ruling the year</p>
-            <Link to="/shop"><button>READ MORE</button></Link>
+            <Link to="/blog"><button>READ MORE</button></Link>
           </div>
           <div className="blog-card">
             <img src="https://i.imgur.com/8Km9tLL.jpg" alt="Blog 3" />
             <span>AUGUST 24, 2023</span>
             <p>Sneakerhead Chronicles: Unveiling the best releases</p>
-            <Link to="/shop"><button>READ MORE</button></Link>
+            <Link to="/blog"><button>READ MORE</button></Link>
           </div>
           <div className="blog-card">
             <img src="https://i.imgur.com/8Km9tLL.jpg" alt="Blog 4" />
             <span>MARCH 01, 2024</span>
             <p>Fashion that cares, comfort that inspires</p>
-            <Link to="/shop"><button>READ MORE</button></Link>
+            <Link to="/blog"><button>READ MORE</button></Link>
           </div>
         </div>
       </section>
@@ -212,52 +213,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-end">Our page has come to an end, but our relationship with you has not.</div>
-        <div className="subscribe">
-          <input type="email" placeholder="Enter your email address" />
-          <button>Subscribe</button>
-        </div>
-        <div className="footer-links">
-          <div className="help">
-            <h4>Need help?</h4>
-            <ul>
-              <li><Link to="/about">About us</Link></li>
-              <li>Order status</li>
-              <li>Delivery</li>
-              <li>Returns</li>
-              <li>Shipping</li>
-              <li>Return and replacement policy</li>
-            </ul>
-          </div>
-          <div className="collections">
-            <h4>Collections</h4>
-            <ul>
-              <li><Link to="/shop">Men</Link></li>
-              <li><Link to="/shop">Women</Link></li>
-              <li><Link to="/shop">Socks</Link></li>
-              <li><Link to="/shop">Sneakers</Link></li>
-              <li><Link to="/shop">Loafers</Link></li>
-              <li><Link to="/shop">Offers</Link></li>
-            </ul>
-          </div>
-          <div className="resources">
-            <h4>Resources</h4>
-            <ul>
-              <li><Link to="/contact">Find a store</Link></li>
-              <li><Link to="/signup">Become a member</Link></li>
-              <li><Link to="/contact">Send us feedback</Link></li>
-            </ul>
-          </div>
-        </div>
-        <div className="social-media">
-          <span>Instagram</span>
-          <span>Twitter</span>
-          <span>Facebook</span>
-          <span>YouTube</span>
-        </div>
-      </footer>
+      
     </div>
   );
 };

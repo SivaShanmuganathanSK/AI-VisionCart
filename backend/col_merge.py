@@ -26,7 +26,7 @@ df = df.drop_duplicates(subset=['combined_features'])
 df = df.drop_duplicates(subset=['product_name'])
 
 # Save cosine similarity only if not already saved
-cosine_sim_path = 'backend/data/cosine_similarity_1000.pkl'
+cosine_sim_path = 'backend/data/cosine_similarity.pkl'
 
 if not os.path.exists(cosine_sim_path):
     print("⏳ Calculating cosine similarity and saving...")
@@ -53,7 +53,7 @@ for rec in recommendations:
     print(f"👉 {rec}")
 
 # Test Search
-search_results = search_products("shirts", df)
+search_results = search_products("shorts", df)
 if search_results:
     print("🔎 Search Results:", search_results)
 else:

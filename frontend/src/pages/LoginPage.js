@@ -1,54 +1,95 @@
 // src/pages/LoginPage.js
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './LoginPage.css';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 const LoginPage = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login here (API request to backend)
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || 'Login failed');
+      }
+
+      // Store the token and user data
+      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
+      // Redirect to home page
+      navigate('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="login-page-centered">
-        <div className="login-form-section">
-          <h2 className="login-title">Sign in to your account</h2>
-          <form className="login-form" onSubmit={handleSubmit}>
+    <div className="login-container">
+      <div className="login-box">
+        <h2>Login</h2>
+        {error && <div className="error-message">{error}</div>}
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
               type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="login-input"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
             />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
             <input
               type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="login-input"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
-            <button type="submit" className="login-btn">Sign In</button>
-          </form>
-          <div className="login-links">
-            <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
-            <span> | </span>
-            <Link to="/signup" className="signup-link">Create an account</Link>
           </div>
-        </div>
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
+        <p className="signup-link">
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

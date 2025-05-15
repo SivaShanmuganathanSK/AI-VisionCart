@@ -36,3 +36,43 @@
     transform: rotate(360deg);
   }
 }
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding-top: 80px; /* Adjust based on your navbar height */
+}
+
+.chatbot-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Ensure the chatbot is above other elements */
+.chatbot-container {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Make sure the chatbot window doesn't get cut off */
+.chatbot-window {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  z-index: 1001;
+}
+
+/* Ensure the chatbot button is always visible */
+.chatbot-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+}

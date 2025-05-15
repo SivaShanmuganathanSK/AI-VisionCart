@@ -2,28 +2,64 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import SearchPage from './pages/SearchPage'; // Import your search page component
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Chatbot from './components/Chatbot';
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
-import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ProfilePage from './pages/ProfilePage';
+import ODOPPage from './pages/ODOPPage';
+import BlogPage from './pages/BlogPage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import ShopPage from './pages/ShopPage';
-import SingleProduct from './pages/SingleProduct';
+import ProductPage from './pages/ProductPage';
+import CartPage from './pages/CartPage';
+import './App.css';
 
-const App = () => {
+function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/shop" element={<ShopPage />} />
-        <Route path="/product/:id" element={<SingleProduct />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <CartProvider>
+        <Router>
+          <div className="app">
+            <Navbar />
+            <main className="main-content">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/odop" element={<ODOPPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/about" element={<AboutPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/product/:id" element={<ProductPage />} />
+                <Route path="/cart" element={<CartPage />} />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <ProfilePage />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Add more protected routes as needed */}
+              </Routes>
+            </main>
+            <Footer />
+            <div className="chatbot-wrapper">
+              <Chatbot />
+            </div>
+          </div>
+        </Router>
+      </CartProvider>
+    </AuthProvider>
   );
-};
+}
 
 export default App;

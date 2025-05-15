@@ -15,7 +15,7 @@ app.add_middleware(
 )
 
 def load_products():
-    json_path = os.path.join(os.path.dirname(__file__), '../data/cleaned_1000_entries_fixed.json')
+    json_path = os.path.join(os.path.dirname(__file__), '../data/cleaned_1000_entries.json')
     try:
         with open(json_path, "r") as f:
             return json.load(f)

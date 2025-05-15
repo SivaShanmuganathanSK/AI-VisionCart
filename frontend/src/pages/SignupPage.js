@@ -1,72 +1,140 @@
 // src/pages/SignupPage.js
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import './SignupPage.css';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
 
 const SignupPage = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { signup } = useAuth();
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
+    setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const result = await signup({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+
+      if (result.success) {
+        navigate('/');
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError('Failed to create account. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <>
-      <Navbar />
-      <div className="signup-page-centered">
-        <div className="signup-form-section">
-          <h2 className="signup-title">Create your account</h2>
-          <form className="signup-form" onSubmit={handleSubmit}>
+    <div className="signup-page">
+      <div className="signup-container">
+        <h1>Create Account</h1>
+        <p className="subtitle">Join our community today</p>
+        
+        {error && <div className="error-message">{error}</div>}
+        
+        <form onSubmit={handleSubmit} className="signup-form">
+          <div className="form-group">
+            <label htmlFor="name">Full Name</label>
             <input
               type="text"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="signup-input"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
               required
+              placeholder="Enter your full name"
             />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
             <input
               type="email"
-              placeholder="Email address"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="signup-input"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
               required
+              placeholder="Enter your email"
             />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="signup-input"
-              required
-            />
-            <input
-              type="password"
-              placeholder="Confirm Password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="signup-input"
-              required
-            />
-            <button type="submit" className="signup-btn">Sign Up</button>
-          </form>
-          <div className="signup-links">
-            <Link to="/login" className="login-link">Already have an account? Login</Link>
-            <span> | </span>
-            <Link to="/forgot-password" className="forgot-link">Forgot password?</Link>
           </div>
+          
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              placeholder="Create a password"
+              minLength="6"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+              placeholder="Confirm your password"
+              minLength="6"
+            />
+          </div>
+          
+          <button 
+            type="submit" 
+            className="signup-button"
+            disabled={loading}
+          >
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </button>
+        </form>
+        
+        <div className="auth-links">
+          <p>
+            Already have an account?{' '}
+            <Link to="/login" className="link">Sign in</Link>
+          </p>
         </div>
       </div>
-      <Footer />
-    </>
+    </div>
   );
 };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "./HomePage.css";
+import Footer from "../components/Footer.js";
 import h1 from "../images/h1.png";
 import h2 from "../images/h2.png";
 import h3 from "../images/h3.png";
@@ -213,8 +214,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      
-    </div>
+          </div>
   );
 };
 

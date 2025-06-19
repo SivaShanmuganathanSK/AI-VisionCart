@@ -26,10 +26,17 @@ const CartPage = () => {
             <ul className="cart-list">
               {cart.map((item, idx) => (
                 <li key={idx} className="cart-item">
-                  <img src={item.product.images?.[0] || item.product.image || 'https://via.placeholder.com/80'} alt={item.product.title || item.product.product_name} />
+                  <img 
+                    src={item.product.image || 'https://via.placeholder.com/80'} 
+                    alt={item.product.product_name} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://via.placeholder.com/80';
+                    }}
+                  />
                   <div className="cart-item-info">
-                    <div>{item.product.title || item.product.product_name}</div>
-                    <div>Color: <span style={{background:item.color, display:'inline-block', width:16, height:16, borderRadius:'50%', border:'1px solid #ccc'}}></span></div>
+                    <div>{item.product.product_name}</div>
+                    <div>Color: <span style={{background: item.color, display:'inline-block', width:16, height:16, borderRadius:'50%', border:'1px solid #ccc'}}></span></div>
                     <div>Size: {item.size}</div>
                     <div className="quantity-controls">
                       <button 
@@ -46,8 +53,8 @@ const CartPage = () => {
                         +
                       </button>
                     </div>
-                    <div>Price: ₹{item.product.price || item.product.discounted_price || item.product.retail_price}</div>
-                    <div>Total: ₹{(item.product.price || item.product.discounted_price || item.product.retail_price) * item.quantity}</div>
+                    <div>Price: ₹{item.product.discounted_price || item.product.retail_price}</div>
+                    <div>Total: ₹{(item.product.discounted_price || item.product.retail_price) * item.quantity}</div>
                   </div>
                   <button className="remove-btn" onClick={() => removeFromCart(item.id, item.color, item.size)}>Remove</button>
                 </li>
@@ -56,7 +63,7 @@ const CartPage = () => {
             <div className="cart-summary">
               <div className="cart-total">
                 Total: ₹{cart.reduce((total, item) => 
-                  total + ((item.product.price || item.product.discounted_price || item.product.retail_price) * item.quantity), 0
+                  total + ((item.product.discounted_price || item.product.retail_price) * item.quantity), 0
                 )}
               </div>
               <button className="clear-cart-btn" onClick={clearCart}>Clear Cart</button>

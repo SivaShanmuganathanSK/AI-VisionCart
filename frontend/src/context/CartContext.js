@@ -22,29 +22,42 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
 
-  const addToCart = (product) => {
+  const addToCart = (product, quantity = 1, color = 'default', size = 'default') => {
     setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id);
+      const existingItem = prevCart.find(item => 
+        item.id === product.uniq_id && 
+        item.color === color && 
+        item.size === size
+      );
+      
       if (existingItem) {
         return prevCart.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
+          (item.id === product.uniq_id && item.color === color && item.size === size)
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevCart, { ...product, quantity: 1 }];
+      return [...prevCart, { 
+        id: product.uniq_id,
+        product: product,
+        quantity: quantity,
+        color: color,
+        size: size
+      }];
     });
   };
 
-  const removeFromCart = (productId) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== productId));
+  const removeFromCart = (productId, color, size) => {
+    setCart(prevCart => prevCart.filter(item => 
+      !(item.id === productId && item.color === color && item.size === size)
+    ));
   };
 
-  const updateQuantity = (productId, quantity) => {
+  const updateQuantity = (productId, color, size, quantity) => {
     if (quantity < 1) return;
     setCart(prevCart =>
       prevCart.map(item =>
-        item.id === productId
+        (item.id === productId && item.color === color && item.size === size)
           ? { ...item, quantity }
           : item
       )
@@ -56,7 +69,10 @@ export const CartProvider = ({ children }) => {
   };
 
   const getCartTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => 
+      total + ((item.product.price || item.product.discounted_price || item.product.retail_price) * item.quantity), 
+      0
+    );
   };
 
   const getCartCount = () => {

@@ -25,8 +25,8 @@ app.add_middleware(
 # Helper function to load product data
 def load_products():
     try:
-        # Adjusted to work correctly on Render
-        json_path = os.path.join(os.path.dirname(__file__), 'data', 'cleaned_1000_entries.json')
+        # Fixed: Correct path for 'data/cleaned_1000_entries.json' from app/app.py
+        json_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'cleaned_1000_entries.json')
         with open(json_path, "r") as f:
             return json.load(f)
     except Exception as e:
